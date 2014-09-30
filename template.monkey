@@ -1,8 +1,16 @@
-Global templates:TList = New TList
+Strict
 
 
 
-Function MakeTemplates()
+Import main
+
+
+
+Global templates := New List< Template >()
+
+
+
+Function MakeTemplates:Void()
 	AddTemplate( "go", 0, 0 )
 	AddTemplate( "clear", 0, 0 )
 	AddTemplate( "noise", 0, 1 )
@@ -23,13 +31,13 @@ Function MakeTemplates()
 	AddTemplate( "in", 0, 1 )
 	AddTemplate( "out", 1, 0 )
 	AddTemplate( "parameter", 0, 1 )
-End Function
+End
 
 
 
-Function AddTemplate( name:String, ins:Int, outs:Int )
-	templates.AddLast( Template.Make( name, ins, outs ) )
-EndFunction
+Function AddTemplate:Void( name:String, ins:Int, outs:Int )
+	templates.AddLast( New Template( name, ins, outs ) )
+End
 
 
 
@@ -41,28 +49,23 @@ Function _GetTemplate:Template( name:String )
 	Next
 	
 	Return Null
-EndFunction
+End
 
 
 
-Function AddSetting( templateName:String, name:String, kind:String, initial:String )
+Function AddSetting:Void( templateName:String, name:String, kind:String, initial:String )
 	Local template:Template = _GetTemplate( templateName )
-	
-	Local setting:Setting = Setting.Make( name, kind, initial )
-	template.settings.Insert( name, setting )
-EndFunction
+	'''Local setting:Setting = Setting.Make( name, kind, initial )
+	'''template.settings.Insert( name, setting )
+End
 
 
 
-Type Template
+Class Template
 	Field name:String, ins:Int, outs:Int
-	Field settings:TMap = CreateMap()
+	'''Field settings:TMap = CreateMap()
 	
-	Function Make:Template( name:String, ins:Int, outs:Int )
-		Local t:Template = New Template
-		t.name = name
-		t.ins = ins
-		t.outs = outs
-		Return t
-	End Function
-End Type
+	Method New( name:String, ins:Int, outs:Int )
+		Self.name = name; Self.ins = ins; Self.outs = outs
+	End
+End

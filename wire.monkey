@@ -1,27 +1,32 @@
-Type Wire
+Strict
+
+
+
+Import main
+
+
+
+Class Wire
 	Field a:Box
 	Field b:Box, bId:Int
 	
-	Function Make:Wire( a:Box, b:Box, bId:Int )
-		Local wire:Wire = New Wire
-		wire.a = a
-		wire.b = b
-		wire.bId = bId
+	Method New( a:Box, b:Box, bId:Int )
+		Self.a = a
+		Self.b = b
+		Self.bId = bId
 		
-		For Local other:Wire = EachIn patch.wires
+		For Local other:Wire = EachIn APP.patch.wires
 			If other.b = b And other.bId = bId
-				patch.wires.Remove( other )
+				APP.patch.wires.Remove( other )
 			EndIf
 		Next
 		
 		If a.done
-			patch.sparks.AddLast( Spark.Make( wire ) )
+			APP.patch.sparks.AddLast( New Spark( Self ) )
 		EndIf
-		
-		Return wire
-	End Function
+	End
 
-	Method Render()
+	Method Render:Void()
 		SetColor 238, 221, 238
 		
 		If a.done
@@ -29,12 +34,12 @@ Type Wire
 		EndIf
 		
 		If _dragMode = DRAG_WIRE
-			If patch.boxOver <> Null And patch.boxOver = b And patch.inOver = bId
-				If Not CycleCheck( patch.boxOVer, from )
+			If APP.patch.boxOver <> Null And APP.patch.boxOver = b And APP.patch.inOver = bId
+				If Not CycleCheck( APP.patch.boxOver, from )
 					SetColor 255, 0, 0
 				EndIf
 			EndIf
-		ElseIf _dragMode = DRAG_NONE And patch.boxOver = b And patch.inOver = bId
+		ElseIf _dragMode = DRAG_NONE And APP.patch.boxOver = b And APP.patch.inOver = bId
 			SetColor 255, 0, 0
 		EndIf
 		
@@ -43,16 +48,16 @@ Type Wire
 		Local x1:Int = b.x + 3 + bId * b.gap
 		Local y1:Int = b.y + 1
 		DrawLine x0, y0, x1, y1
-	End Method
+	End
 	
-	Function DrawFrom( from:Box, x1:Int, y1:Int )
+	Function DrawFrom:Void( from:Box, x1:Int, y1:Int )
 		SetColor 255, 255, 255
 		Local x0:Int = from.x + 3
 		Local y0:Int = from.y + from.h - 2
 		DrawLine x0, y0, x1, y1
-	End Function
+	End
 	
-	Function DrawFromTo( a:Box, b:Box, bId:Int )
+	Function DrawFromTo:Void( a:Box, b:Box, bId:Int )
 		SetColor 255, 255, 255
 		
 		If CycleCheck( b, a )
@@ -64,5 +69,5 @@ Type Wire
 		Local x1:Int = b.x + 3 + bId * b.gap
 		Local y1:Int = b.y + 1
 		DrawLine x0, y0, x1, y1
-	End Function
-End Type
+	End
+End

@@ -1,41 +1,46 @@
-Type Spark
+Strict
+
+
+
+Import main
+
+
+
+Class Spark
 	Field wire:Wire
 	Field n:Int
 	Field arrived:Int
 	
-	Function Make:Spark( wire:Wire )
-		Local spark:Spark = New Spark
-		spark.wire = wire
+	Method New( wire:Wire )
+		Self.wire = wire
 		wire.b.done = False
 		
-		For Local other:Spark = EachIn patch.sparks
+		For Local other:Spark = EachIn APP.patch.sparks
 			If other.wire = wire
-				patch.sparks.Remove( other )
+				APP.patch.sparks.Remove( other )
 			EndIf
 		Next
-		
-		Return spark
-	End Function
+	End
 	
-	Method Update()
+	Method Update:Void()
 		If Not arrived
 			n = n + 2
 			
 			If n >= 30
 				n = 30
 				arrived = True
-				Local satisfied:Byte[ wire.b.ins ]
+				Local satisfied:Bool[ wire.b.ins ]
 				satisfied[ wire.bId ] = True
 				
 				For Local n:Int = 0 Until wire.b.ins
-					For Local other:Wire = EachIn patch.wires
+					For Local other:Wire = EachIn APP.patch.wires
 						If other.b = wire.b And other <> wire
 							satisfied[n] = other.a.done
 						EndIf
 					Next
 				Next
 				
-				For Local spark:Spark = EachIn patch.sparks
+				For Local spark:Spark = EachIn APP.patch.sparks
 					If spark.wire.b = wire.b
 						If Not spark.arrived
 							satisfied[ spark.wire.bId ] = False
@@ -53,9 +58,9 @@ Type Spark
 				Next
 				
 				If shoot
-					For Local spark:Spark = EachIn patch.sparks
+					For Local spark:Spark = EachIn APP.patch.sparks
 						If spark.wire.b = wire.b
-							patch.sparks.Remove( spark )
+							APP.patch.sparks.Remove( spark )
 						EndIf
 					Next
 					
@@ -65,7 +70,7 @@ Type Spark
 		EndIf
 	End Method
 	
-	Method Render()
+	Method Render:Void()
 		Local x0:Int = wire.a.x + 3
 		Local y0:Int = wire.a.y + wire.a.h - 2
 		Local x1:Int = wire.b.x + 3 + wire.bId * wire.b.gap
@@ -77,4 +82,4 @@ Type Spark
 		SetColor 255, 255, 0
 		DrawOval x - 2, y - 2, 5, 5
 	End Method
-End Type
+End
