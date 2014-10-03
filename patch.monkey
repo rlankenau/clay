@@ -32,8 +32,8 @@ Class Patch Extends ViewGadget
 			
 			Select _dragMode
 			Case DRAG_BOX
-				boxSelected.x = sx + event.dx
-				boxSelected.y = sy + event.dy
+				APP.project.boxSelected.x = sx + event.dx
+				APP.project.boxSelected.y = sy + event.dy
 			Case DRAG_WIRE
 				'TODO
 			End
@@ -58,9 +58,9 @@ Class Patch Extends ViewGadget
 					_dragMode = DRAG_BOX
 					
 					SelectBox( boxOver )
-					boxes.Remove( boxSelected )
-					boxes.AddLast( boxSelected )
-					sx = boxSelected.x; sy = boxSelected.y
+					boxes.Remove( APP.project.boxSelected )
+					boxes.AddLast( APP.project.boxSelected )
+					sx = APP.project.boxSelected.x; sy = APP.project.boxSelected.y
 				EndIf
 			Else
 				SelectBox( Null )
@@ -77,10 +77,10 @@ Class Patch Extends ViewGadget
 					EndIf
 				EndIf
 			ElseIf _dragMode = DRAG_BOX
-				Local gadget:Gadget = APP.root.HandleEvent( New Event( EVENT_SECRET ) )
+				Local gadget:Gadget = window.HandleEvent( New Event( EVENT_SECRET ) )
 			
 				If gadget <> APP.patch
-					DeleteBox( boxSelected )
+					DeleteBox( APP.project.boxSelected )
 					SelectBox( Null )
 				EndIf
 			EndIf
@@ -88,8 +88,8 @@ Class Patch Extends ViewGadget
 		Case EVENT_MOUSE_UP_RIGHT
 			
 		Case EVENT_MOUSE_DOUBLE_CLICK_LEFT
-			If boxSelected <> Null And boxSelected = boxOver And boxSelected.ins = 0
-				boxSelected.Execute()
+			If APP.project.boxSelected <> Null And APP.project.boxSelected = boxOver And APP.project.boxSelected.ins = 0
+				APP.project.boxSelected.Execute()
 			EndIf
 		End
 		
@@ -156,7 +156,8 @@ Class Patch Extends ViewGadget
 			Case DRAG_NONE
 				If outOver
 					'''HideMouse()
-					DrawImage imgO, LocalX( _mouseX ), LocalY( _mouseY )
+						'TODO replace _Local with GetLocal( x, Self, null)
+					DrawImage imgO, GetLocalX( window._mouseX ), GetLocalY( window._mouseY )
 				ElseIf inOver <> -1
 					Local yes:Int = False
 					
@@ -169,12 +170,12 @@ Class Patch Extends ViewGadget
 					
 					If yes
 						'''HideMouse()
-						DrawImage imgX, LocalX( _mouseX ), LocalY( _mouseY )
+						DrawImage imgX, GetLocalX( window._mouseX ), GetLocalY( window._mouseY )
 					EndIf
 				EndIf
 			Case DRAG_WIRE
 				If boxOver = Null
-					Wire.DrawFrom( from, LocalX( _mouseX ), LocalY( _mouseY ) )
+					Wire.DrawFrom( from, GetLocalX( window._mouseX ), GetLocalY( window._mouseY ) )
 				Else
 					Wire.DrawFromTo( from, boxOver, inOver )
 				EndIf
@@ -185,29 +186,28 @@ End
 
 
 
-Global boxSelected:Box
-
-
-
 Function SelectBox:Void( box:Box )
-	boxSelected = box
-	'''panel.children.Clear()
-	
-	If box = Null
-		Return
-	EndIf
-	
+	APP.project.boxSelected = box
+	APP.panel.children.Clear()
+	If box = Null Then Return
 	Local y:Int = 4
 	
-	'''For Local setting:Setting = EachIn box.settings.Values()
-	'''	Select setting.kind
-	'''		Case "f"
-				'''panel.AddChild( FloatProperty.Make( 4, y, setting.name, Int( setting.value ) ) )
-	'''		Case "i1-9"
-				'''panel.AddChild( NumberBox.Make( 4, y, setting.name, Int( setting.value ), 1, 9 ) )
-	'''		Default
-	'''	End
+	For Local setting:Setting = EachIn box.settings.Values()
+		Select setting.kind
+			Case "f"
+				APP.panel.AddChild( New Slider( 4, y, setting.name, setting.value ) )
+			Case "i1-9"
+				APP.panel.AddChild( New NumberBox( 4, y, setting.name, setting.value, 1, 9 ) )
+			Case "dedge"
+				APP.panel.AddChild( New DropList( 4, y, setting.name, [ "dead", "alive", "wrap" ], setting.value ) )
+			Case "b"
+				APP.panel.AddChild( New CheckBox( 4, y, setting.name, setting.value ) )
+			Case "a9s8"
+				APP.panel.AddChild( New RuleTable( 4, y, setting.name, setting.value ) )
+			Default
+		End
 		
-	'''	y = y + 16 + 4
-	'''Next
+		'TODO trash this
+		y = y + 16 + 4
+	Next
 End

@@ -3,6 +3,8 @@ Strict
 
 
 'TODO
+'BOX SELECT DUMMY
+'actual doubleclick
 'abstract HandleEvent out of Gadget into IGadgetHandleEvent, and also into HandleMouseEvent, HandleKeyboardEvent etc
 'settings
 'boxes that take an any number of inputs ( darken, lighten, etc ) and expand so that there is always one free
@@ -11,33 +13,46 @@ Strict
 'drag-and-stretch a sub patch box around some boxes to make a new sub patch
 'same with sequence, repeat, whatever
 'error messages in status bar "cycle detected", "mismatched types", etc
+'editable bindings for boxes, i.e. assign 'q' to one generator, 'w' to another, 'enter' to the 'go' prototype
+'allow laps to go to zero for automata( bypass )
+'have bypass checkbox automatically on all boxes that have one input and one output of the same type
+' patches can have "slots" where you can put boxes that match the template
+' "share" parameter for automata ( and other stuff? ) no this is redundant when parameter inlets exist, well maybe not
+' one option would be "unique" ( don't share )
+'mouse over inlets, outlets to see hover text describing the parameter name and type
 
 
 
+#GLFW_USE_MINGW = False
 #MOJO_IMAGE_FILTERING_ENABLED = False
 
+
+
 Import mojo
+Import os
 Import gui
+Import ninepatch
+Import diddy.externfunctions
+Import diddy.xml
 
 
 
 Import box
+Import browser
 Import spark
-'''Include "functions.bmx"
+Import functions
 Import template
-'''Include "gui.bmx"
-'''Include "events.bmx"
 Import patch
 Import tray
-'''Include "panel.bmx"
-'''Include "settings.bmx"
-'''Include "gadgets.bmx"
-'''Include "gadgetevents.bmx"
+Import panel
+Import setting
+Import gadgets
 Import wire
+Import project
 
 
 
-Global imgO:Image, imgX:Image
+Global imgO:Image, imgX:Image, imgTab:NinePatchImage, imgClose:Image, imgOpen:Image, imgSave:Image, imgNew:Image
 
 
 
@@ -56,6 +71,7 @@ Const DRAG_WIRE:Int = 2
 Const TRAY_HEIGHT:Int = 30
 Const PANEL_WIDTH:Int = 100
 Const VIEW_HEIGHT:Int = 80
+Const TAB_HEIGHT:Int = 18
 
 
 
@@ -71,53 +87,54 @@ Global APP:MyApp
 
 
 Class MyApp Extends App
-	Global root:ContainerGadget
-	Global patch:Patch
-	'''Global panel:Panel
-	Global tray:Tray
-	'''Global viewPanel:View
+	Field window:WindowGadget
+	Field browser:Browser
+	Field _project:Project
+	Method project:Project() Property; Return _project; End
+	
+	Method project:Void( value:Project ) Property
+		If _project <> Null Then _project.Disable()
+		_project = value
+		If _project <> Null Then _project.Enable()
+	End
+	
+	Method patch:Patch() Property; Return project.patch; End
+	Method panel:Panel() Property; Return project.panel; End
+	Method tray:Tray() Property; Return project.tray; End
+	Method viewPanel:View() Property; Return project.viewPanel; End
 	
 	Method OnCreate:Int()
 		SetUpdateRate( 30 )
 		
 		imgX = LoadImage( "x.png" , 1, Image.MidHandle )
+		imgX.SetHandle( imgX.HandleX() - 0.5, imgX.HandleY() - 0.5 )
 		imgO = LoadImage( "o.png" , 1, Image.MidHandle )
+		imgO.SetHandle( imgO.HandleX() - 0.5, imgO.HandleY() - 0.5 )
+		imgTab = New NinePatchImage( LoadImage( "tab.png" ), [ 9, 8, 1, 1 ] ) '1, 1 is a klude, TODO 3 patch
+		imgClose = LoadImage( "close.png" )
+		imgOpen = LoadImage( "open.png" )
+		imgSave = LoadImage( "save.png" )
+		imgNew = LoadImage( "new.png" )
+		SetFont( LoadImage( "font.png", 96, Image.XPadding ) )
 		
 		MakeTemplates()
 		
-		root = New ContainerGadget( 0, 0, 640, 480 )
-		patch = New Patch( 1, TRAY_HEIGHT + 2, 640 - PANEL_WIDTH - 3, 480 - TRAY_HEIGHT - 3 )
-		'''panel = New Panel( 640 - PANEL_WIDTH - 1, TRAY_HEIGHT + 2, PANEL_WIDTH, 480 - TRAY_HEIGHT - VIEW_HEIGHT - 4 )
-		tray = New Tray( 1, 1, 640 - 2, TRAY_HEIGHT )
-		'''viewPanel = New View( panel.x, 480 - VIEW_HEIGHT - 1, panel.w, VIEW_HEIGHT )
+		window = New WindowGadget( 0, 0, 640, 480 )
+		Event.globalWindow = window
+		browser = New Browser( 0, 1, 640, TAB_HEIGHT )
+		window.AddChild( browser )
 		
-		root.AddChild( patch )
-		'''root.AddChild( panel )
-		root.AddChild( tray )
-		'''root.AddChild( viewPanel )
 		Return 0
 	End
 	
 	Method OnUpdate:Int()
-		ProduceEvents()
+		window.Update()
 		
-		While _events.Count() > 0
-			HandleEvent( root, _events.RemoveFirst() )
+		While window._events.Count() > 0
+			window.HandleEvent( window._events.RemoveFirst() )
 		Wend
 		
-		If KeyHit( KEY_B )
-			patch.boxes.AddLast( New Box( patch.LocalX( _mouseX ), patch.LocalY( _mouseY ), New Template( "dum", 2, 1 ) ) )
-		EndIf
-		
-		For Local spark:Spark = EachIn patch.sparks
-			spark.Update()
-		Next
-	
-		If boxSelected <> Null
-			'''View( viewPanel.box, boxSelected )
-		Else
-			'''_Clear( viewPanel.box )
-		EndIf
+		If _project <> Null Then _project.Update()
 		
 		Return 0
 	End
@@ -125,7 +142,7 @@ Class MyApp Extends App
 	Method OnRender:Int()
 		Cls
 		SetMatrix 1, 0, 0, 1, 0, 0
-		root.Render()
+		window.Render()
 		Return 0
 	End
 End
