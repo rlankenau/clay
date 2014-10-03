@@ -154,7 +154,7 @@ Class TabGadget Extends ContainerGadget
 	Field project:Project
 	
 	Method New( path:String )
-		Self.name = StripAll( path )
+		Self.name = os.StripAll( path )
 		w = TextWidth( name ) + 18 + 34
 		h = 18
 		saveButton = New BrowserButton( 8 + TextWidth( Self.name ) + 11, 5, imgSave )

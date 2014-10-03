@@ -3194,8 +3194,8 @@
     </DocUserOptions>
     <DocUserOptions Filename=".\browser.monkey" Open="true" SplitView="false" SplitIsVertical="false" SplitSize="179">
       <CursorPos>
-        <X>45</X>
-        <Y>167</Y>
+        <X>2</X>
+        <Y>139</Y>
       </CursorPos>
       <OutLiningSerialization>
         <Folding_Nodes_Collection>
@@ -12482,47 +12482,6 @@
     <FolderStatus NodePath="clay\diddy\native\res" Expanded="false" />
     <FolderStatus NodePath="clay\diddy\native\res\values" Expanded="false" />
     <FolderStatus NodePath="clay\gui" Expanded="true" />
-    <FolderStatus NodePath="clay\main.buildv79e" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\gcc_linux" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\gcc_winnt" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\gcc_winnt\build" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\gcc_winnt\build\debug" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\gcc_winnt\Debug" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\gcc_winnt\Debug\data" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\gcc_winnt\Debug\external" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\gcc_winnt\Debug\internal" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\glfw" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\glfw\include" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\glfw\include\GL" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\glfw\lib" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\glfw\lib\carbon" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\glfw\lib\cocoa" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\glfw\lib\win32" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\glfw\lib\x11" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\openal" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\openal\include" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\openal\libs" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\openal\libs\Win32" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\openal\libs\Win32\EFX-Util_MT" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\openal\libs\Win32\EFX-Util_MTDLL" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\openal\libs\Win64" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\openal\libs\Win64\EFX-Util_MT" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\openal\libs\Win64\EFX-Util_MTDLL" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\stb" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\vc2010" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\vc2010\build" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\vc2010\build\Debug" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\vc2010\Debug" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\vc2010\Debug\data" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\vc2010\Debug\external" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\vc2010\Debug\internal" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\xcode" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\xcode\data" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\xcode\English.lproj" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\xcode\external" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\xcode\internal" Expanded="false" />
-    <FolderStatus NodePath="clay\main.buildv79e\glfw\xcode\MonkeyGame.xcodeproj" Expanded="false" />
     <FolderStatus NodePath="clay\main.data" Expanded="false" />
   </Folders>
 </JiProjUserOptions>
