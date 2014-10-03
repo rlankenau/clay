@@ -57,13 +57,13 @@ Class Tray Extends ViewGadget
 		Case EVENT_MOUSE_UP_LEFT
 			If _dragMode = DRAG_BOX
 				boxSelected.x = sx; boxSelected.y = sy
-				Local gadget:Gadget = APP.root.HandleEvent( New Event( EVENT_SECRET ) )
+				Local gadget:Gadget = window.HandleEvent( New Event( EVENT_SECRET ) )
 				
 				If gadget = APP.patch
-					Local box:Box = New Box( APP.patch.LocalX( GlobalX( sx ) + event.dx ), APP.patch.LocalY( GlobalY( sy ) + event.dy ), _GetTemplate( boxSelected.kind ) )
-					
+					Local box:Box = New Box( APP.patch.GetLocalX( sx + event.dx, Self ), APP.patch.GetLocalY( sy + event.dy, Self ), _GetTemplate( boxSelected.kind ) )
+						
 					If boxSelected.kind = "view"
-						box = New ViewBox( APP.patch.LocalX( GlobalX( sx ) + event.dx ), APP.patch.LocalY( GlobalY( sy ) + event.dy ) )
+						box = New ViewBox( APP.patch.GetLocalX( sx + event.dx, Self ), APP.patch.GetLocalY( sy + event.dy, Self ) )
 					EndIf
 					
 					APP.patch.boxes.AddLast( box )
@@ -122,6 +122,7 @@ Class View Extends Gadget
 	End
 	
 	Method HandleEvent:Gadget( event:Event )
+		Return Self
 	End
 	
 	Method OnRender:Void()
@@ -129,9 +130,8 @@ Class View Extends Gadget
 		DrawRect 0, 0, w, h
 		SetColor 0, 0, 0
 		DrawRect 1, 1, w - 2, h - 2
-	End
-	
-	Method OnRenderInterior:Void()
+		
+		SetColor 255, 255, 255
 		box.Render()
 	End
 End
