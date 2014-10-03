@@ -21,17 +21,6 @@ Class ContainerGadget Extends ViewGadget
 	Method AddChild:Void( child:Gadget )
 		children.AddLast( child )
 		child.parent = Self
-		child.window = window
-	 	Local container:ContainerGadget = ContainerGadget( child )
-		If container <> Null Then container._PassDownWindow()
-	End
-	
-	Method _PassDownWindow:Void()
-		For Local child:Gadget = EachIn children
-			child.window = window
-			Local container:ContainerGadget = ContainerGadget( child )
-			If container <> Null container._PassDownWindow()
-		Next
 	End
 		
 	Method HandleEvent:Gadget( event:Event )
@@ -40,15 +29,13 @@ Class ContainerGadget Extends ViewGadget
 		EndIf
 			
 		If event.destination <> Null
-			event.x = event.destination.GetLocalX( event.x, Self )
-			event.y = event.destination.GetLocalY( event.y, Self )
+			event.x = event.destination.LocalX( event.x )
+			event.y = event.destination.LocalY( event.y )
 			Return event.destination.HandleEvent( event )
 		Else
 			Local champ:Gadget
 				
 			For Local child:Gadget = EachIn children.Backwards()
-				If Not child.enabled Then Continue
-				
 				If RectangleContainsPoint( child.x, child.y, child.w, child.h, event.x, event.y )
 					champ = child
 					Exit
@@ -56,8 +43,8 @@ Class ContainerGadget Extends ViewGadget
 			Next
 				
 			If champ <> Null
-				event.x = champ.GetLocalX( event.x, Self )
-				event.y = champ.GetLocalY( event.y, Self )
+				event.x = event.x - champ.xTranslate
+				event.y = event.y - champ.yTranslate
 				event.destination = champ.HandleEvent( event )
 			EndIf
 		EndIf
@@ -85,7 +72,6 @@ Class ContainerGadget Extends ViewGadget
 		Local sx:Int = _s[0], sy:Int = _s[1], sw:Int = _s[2], sh:Int = _s[3]
 			
 		For Local child:Gadget = EachIn children
-			If Not child.enabled Then Continue
 			PushMatrix()
 			PushScissor()
 			Local cx:Int = child.x + ox, cy:Int = child.y + oy, cw:Int = child.w, ch:Int = child.h

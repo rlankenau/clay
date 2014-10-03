@@ -2,10 +2,6 @@ Strict
 
 
 
-Import gui
-
-
-
 Class GadgetEvent
 	Field source:Gadget
 	

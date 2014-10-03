@@ -11,8 +11,8 @@ Class Box
 	
 	Field id:Int
 	Field kind:String
-	Field settings := New StringMap< Setting >()
-	Field x:Int, y:Int, w:Int, h:Int = 22, gap:Int = 16
+	Field settings:StringMap< Object >
+	Field x:Int, y:Int, w:Int = 23, h:Int = 21, gap:Int = 15
 	Field ins:Int = 2, outs:Int = 1
 	
 	Field state:Int[][]
@@ -28,16 +28,16 @@ Class Box
 		Self.x = x; Self.y = y
 		kind = template.name
 		
-		For Local setting:Setting = EachIn template.settings.Values()
-			settings.Insert( setting.name, setting.Copy() )
-		Next
+		'''For Local setting:Setting = EachIn template.settings.Values()
+		'''	settings.Insert( setting.name, setting.Copy() )
+		'''Next
 		
 		ins = template.ins
 		outs = template.outs
-		w = Max( 8 + gap * ( ins - 1 ), Int( TextWidth( kind ) ) + 4 )
+		w = Max( 8 + gap * ( ins - 1 ), Int( TextWidth( kind ) + 6 ) )
 		
 		If ins > 1
-			gap = Max( 16, ( w - 9 * ins ) / ( ins - 1 ) + 9 )
+			gap = Max( 15, ( w - 8 * ins ) / ( ins - 1 ) + 8 )
 		EndIf
 		
 		state = Initialize2dArray( 20, 15 )
@@ -46,13 +46,13 @@ Class Box
 	Method Execute:Void()
 		Local in:Box[ ins ]
 		
-		For Local wire:Wire = EachIn APP.patch.wires
-			If wire.b = Self
-				in[ wire.bId ] = wire.a
-			EndIf
-		Next
+		'''For Local wire:Wire = EachIn patch.wires
+		'''	If wire.b = Self
+		'''		in[ wire.bId ] = wire.a
+		'''	EndIf
+		'''Next
 		
-		ExecuteBox( Self, in )
+		'''ExecuteBox( Self, in )
 		MakeSparks( Self )
 		done = True
 	End
@@ -60,7 +60,7 @@ Class Box
 	Method Render:Void()
 		SetColor 112, 146, 190
 		
-		If APP.project.boxSelected = Self
+		If boxSelected = Self
 			SetColor 255, 255, 255
 		EndIf
 		
@@ -76,21 +76,21 @@ Class Box
 		SetColor 238, 221, 238
 		
 		For Local n:Int = 0 Until ins
-			DrawRect x + n * gap, y, 9, 3
+			DrawRect x + n * gap, y, 8, 3
 		Next
 		
 		For Local n:Int = 0 Until outs
-			DrawRect x + n * 16, y + h - 3, 9, 3
+			DrawRect x + n * 15, y + h - 3, 8, 3
 		Next
 		
 		If ViewBox( Self ) = Null
 			SetColor 255, 255, 255
 			
-			If Not implementedTemplates.Contains( kind )
-				SetColor 255, 0, 0
-			EndIf
+			'''If Not implementedTemplates.Contains( kind )
+			'''	SetColor 255, 0, 0
+			'''EndIf
 			
-			DrawText kind, x + 2, y + 4
+			DrawText kind, x + 3, y + 3
 		EndIf
 	End
 End
@@ -104,7 +104,6 @@ Class ViewBox Extends Box
 		kind = "view"
 		ins = 1
 		outs = 0
-		state = Initialize2dArray( 20, 15 )
 	End
 	
 	Method Render:Void()
@@ -113,7 +112,7 @@ Class ViewBox Extends Box
 		
 		For Local _x:Int = 0 Until 20
 		For Local _y:Int = 0 Until 15
-			If state[ _x ][ _y ] = 1
+			If state[ _x][ _y ] = 1
 				DrawRect 2 + x + _x * 4, 2 + y + _y * 4, 4, 4
 			EndIf
 		Next

@@ -24,7 +24,8 @@ Class Spark
 	
 	Method Update:Void()
 		If Not arrived
-			n = n + 6			
+			n = n + 2
+			
 			If n >= 30
 				n = 30
 				arrived = True
