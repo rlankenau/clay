@@ -6,7 +6,7 @@ Import main
 
 
 
-Global implementedTemplates:List< String > = New List< String >( [ "go", "clear", "noise", "automata", "smooth", "expand", "contract", "darken", "lighten", "invert", "fill", "view" ] )
+Global implementedTemplates:List< String > = New List< String >( [ "go", "clear", "noise", "automaton", "smooth", "expand", "contract", "darken", "lighten", "invert", "fill", "canvas", "view" ] )
 
 
 
@@ -15,7 +15,7 @@ Function ExecuteBox:Void( box:Box, in:Box[] )
 	Case "go"
 		Clear()
 		
-		For Local root:Box = EachIn APP.patch.boxes
+		For Local root:Box = EachIn PROJ.patch.boxes
 			If root.ins = 0 And root.kind <> "go"
 				root.Execute()
 			EndIf
@@ -25,7 +25,7 @@ Function ExecuteBox:Void( box:Box, in:Box[] )
 	Case "noise"
 		Noise( box )
 	Case "automata"
-		Automata9Sum8( box, in[0], ruleTables.Get( box.settings.Get( "rules" ).value ).value )
+		Automata9Sum8( box, in[0], UnpackRules( box.settings.Get( "rules" ).value ) )
 	Case "conway"
 	Case "smooth"
 		Smooth( box, in[0] )
@@ -49,9 +49,9 @@ End
 
 
 Function Clear:Void()
-	APP.patch.sparks.Clear()
+	PROJ.patch.sparks.Clear()
 		
-	For Local _box:Box = EachIn APP.patch.boxes
+	For Local _box:Box = EachIn PROJ.patch.boxes
 		Fill( _box, 0 )
 		_box.done = False
 	Next

@@ -20,6 +20,8 @@ Strict
 ' "share" parameter for automata ( and other stuff? ) no this is redundant when parameter inlets exist, well maybe not
 ' one option would be "unique" ( don't share )
 'mouse over inlets, outlets to see hover text describing the parameter name and type
+'generators should execute as soon as they are instantiated
+'write canvas to file
 
 
 
@@ -39,16 +41,18 @@ Import diddy.xml
 
 Import box
 Import browser
-Import spark
 Import functions
-Import template
-Import patch
-Import tray
-Import panel
-Import setting
 Import gadgets
-Import wire
+Import panel
+Import patch
 Import project
+Import setting
+Import spark
+Import template
+Import tray
+Import view
+Import wire
+
 
 
 
@@ -76,32 +80,25 @@ Const TAB_HEIGHT:Int = 18
 
 
 Function Main:Int()
-	APP = New MyApp()
+	New MyApp()
 	Return 0
 End
 
 
 
-Global APP:MyApp
+Global PROJ:Project
 
+
+Function SetProject:Void( project:Project )
+	If PROJ <> Null Then PROJ.Disable()
+	PROJ = project
+	If PROJ <> Null Then PROJ.Enable()
+End
 
 
 Class MyApp Extends App
 	Field window:WindowGadget
 	Field browser:Browser
-	Field _project:Project
-	Method project:Project() Property; Return _project; End
-	
-	Method project:Void( value:Project ) Property
-		If _project <> Null Then _project.Disable()
-		_project = value
-		If _project <> Null Then _project.Enable()
-	End
-	
-	Method patch:Patch() Property; Return project.patch; End
-	Method panel:Panel() Property; Return project.panel; End
-	Method tray:Tray() Property; Return project.tray; End
-	Method viewPanel:View() Property; Return project.viewPanel; End
 	
 	Method OnCreate:Int()
 		SetUpdateRate( 30 )
@@ -134,7 +131,7 @@ Class MyApp Extends App
 			window.HandleEvent( window._events.RemoveFirst() )
 		Wend
 		
-		If _project <> Null Then _project.Update()
+		If PROJ <> Null Then PROJ.Update()
 		
 		Return 0
 	End
@@ -150,9 +147,9 @@ End
 
 
 Function MakeSparks:Void( box:Box )
-	For Local wire:Wire = EachIn APP.patch.wires
+	For Local wire:Wire = EachIn PROJ.patch.wires
 		If wire.a = box
-			APP.patch.sparks.AddLast( New Spark( wire ) )
+			PROJ.patch.sparks.AddLast( New Spark( wire ) )
 		EndIf
 	Next
 End
@@ -164,13 +161,13 @@ Function DeleteBox:Void( box:Box )
 	
 	'TODO quit playback
 	
-	For Local wire:Wire = EachIn APP.patch.wires
+	For Local wire:Wire = EachIn PROJ.patch.wires
 		If wire.a = box Or wire.b = box
 			DeleteWire( wire )
 		EndIf
 	Next
 	
-	APP.patch.boxes.Remove( box )
+	PROJ.patch.boxes.Remove( box )
 End
 
 
@@ -178,35 +175,9 @@ End
 Function DeleteWire:Void( wire:Wire )
 	If wire = Null Then Return
 	
-	For Local spark:Spark = EachIn APP.patch.sparks
-		If spark.wire = wire Then APP.patch.sparks.RemoveEach( spark )
+	For Local spark:Spark = EachIn PROJ.patch.sparks
+		If spark.wire = wire Then PROJ.patch.sparks.RemoveEach( spark )
 	Next
 	
-	APP.patch.wires.Remove( wire )
-End
-
-
-
-Function CycleCheck:Bool( a:Box, b:Box )
-	Local list := New List< Box >()
-	list.AddLast( b )
-	Local count:Int = 0
-	
-	While list.Count() <> count
-		count = list.Count()
-		
-		For Local wire:Wire = EachIn APP.patch.wires
-			If list.Contains( wire.b )
-				If Not list.Contains( wire.a )
-					list.AddLast( wire.a )
-				EndIf
-			EndIf
-		Next
-	Wend
-	
-	If list.Contains( a )
-		Return True
-	EndIf
-	
-	Return False
+	PROJ.patch.wires.Remove( wire )
 End

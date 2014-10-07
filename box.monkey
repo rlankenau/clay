@@ -7,10 +7,11 @@ Import main
 
 
 Class Box
-	Global idNext:Int
+	Global idNext:Int	'TODO, move this to project
 	
 	Field id:Int
 	Field kind:String
+	Field truncated:Bool
 	Field settings := New StringMap< Setting >()
 	Field x:Int, y:Int, w:Int, h:Int = 22, gap:Int = 16
 	Field ins:Int = 2, outs:Int = 1
@@ -22,11 +23,12 @@ Class Box
 		Return ins = 0 And kind <> "omni" And kind <> "in"
 	End
 	
-	Method New( x:Int, y:Int, template:Template )
+	Method New( x:Int, y:Int, template:Template, truncated:Bool = False )
 		Self.id = idNext
 		idNext += 1
 		Self.x = x; Self.y = y
 		kind = template.name
+		Self.truncated = truncated
 		
 		For Local setting:Setting = EachIn template.settings.Values()
 			settings.Insert( setting.name, setting.Copy() )
@@ -34,10 +36,15 @@ Class Box
 		
 		ins = template.ins
 		outs = template.outs
-		w = Max( 8 + gap * ( ins - 1 ), Int( TextWidth( kind ) ) + 4 )
 		
-		If ins > 1
-			gap = Max( 16, ( w - 9 * ins ) / ( ins - 1 ) + 9 )
+		If kind = "view" And Not truncated
+			w = 84; h = 64
+		Else
+			w = Max( 8 + gap * ( ins - 1 ), Int( TextWidth( kind ) ) + 4 )
+		
+			If ins > 1
+				gap = Max( 16, ( w - 9 * ins ) / ( ins - 1 ) + 9 )
+			EndIf
 		EndIf
 		
 		state = Initialize2dArray( 20, 15 )
@@ -46,7 +53,7 @@ Class Box
 	Method Execute:Void()
 		Local in:Box[ ins ]
 		
-		For Local wire:Wire = EachIn APP.patch.wires
+		For Local wire:Wire = EachIn PROJ.patch.wires
 			If wire.b = Self
 				in[ wire.bId ] = wire.a
 			EndIf
@@ -60,7 +67,7 @@ Class Box
 	Method Render:Void()
 		SetColor 112, 146, 190
 		
-		If APP.project.boxSelected = Self
+		If PROJ.boxSelected = Self
 			SetColor 255, 255, 255
 		EndIf
 		
@@ -83,7 +90,9 @@ Class Box
 			DrawRect x + n * 16, y + h - 3, 9, 3
 		Next
 		
-		If ViewBox( Self ) = Null
+		If kind = "view" And Not truncated
+			_RenderView()
+		Else
 			SetColor 255, 255, 255
 			
 			If Not implementedTemplates.Contains( kind )
@@ -93,30 +102,16 @@ Class Box
 			DrawText kind, x + 2, y + 4
 		EndIf
 	End
-End
-
-
-
-Class ViewBox Extends Box
-	Method New( x:Int, y:Int )
-		Self.x = x; Self.y = y
-		w = 84; h = 64
-		kind = "view"
-		ins = 1
-		outs = 0
-		state = Initialize2dArray( 20, 15 )
-	End
 	
-	Method Render:Void()
-		Super.Render()
+	Method _RenderView:Void()
 		SetColor 255, 255, 255
 		
 		For Local _x:Int = 0 Until 20
-		For Local _y:Int = 0 Until 15
-			If state[ _x ][ _y ] = 1
-				DrawRect 2 + x + _x * 4, 2 + y + _y * 4, 4, 4
-			EndIf
-		Next
+			For Local _y:Int = 0 Until 15
+				If state[ _x ][ _y ] = 1
+					DrawRect 2 + x + _x * 4, 2 + y + _y * 4, 4, 4
+				EndIf
+			Next
 		Next
 	End
 End

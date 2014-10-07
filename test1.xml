@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root idNext="27" ox="0" oy="0">
+  <boxes>
+    <view id="24" x="215" y="217">
+      <settings />
+    </view>
+    <contract id="25" x="253" y="150">
+      <settings />
+    </contract>
+    <noise id="26" x="255" y="69">
+      <settings density="9" />
+    </noise>
+  </boxes>
+  <wires>
+    <wire from="25" to="24" toId="0" />
+    <wire from="26" to="25" toId="0" />
+  </wires>
+</root>
+

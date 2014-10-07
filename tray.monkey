@@ -18,7 +18,7 @@ Class Tray Extends ViewGadget
 		x = 10; y = 5
 		
 		For Local template:Template = EachIn templates
-			Local box:Box = New Box( x, y, template )
+			Local box:Box = New Box( x, y, template, True )
 			boxes.AddLast( box )
 			x = x + box.w + 10
 		Next
@@ -59,14 +59,9 @@ Class Tray Extends ViewGadget
 				boxSelected.x = sx; boxSelected.y = sy
 				Local gadget:Gadget = window.HandleEvent( New Event( EVENT_SECRET ) )
 				
-				If gadget = APP.patch
-					Local box:Box = New Box( APP.patch.GetLocalX( sx + event.dx, Self ), APP.patch.GetLocalY( sy + event.dy, Self ), _GetTemplate( boxSelected.kind ) )
-						
-					If boxSelected.kind = "view"
-						box = New ViewBox( APP.patch.GetLocalX( sx + event.dx, Self ), APP.patch.GetLocalY( sy + event.dy, Self ) )
-					EndIf
-					
-					APP.patch.boxes.AddLast( box )
+				If gadget = PROJ.patch
+					Local box:Box = New Box( PROJ.patch.GetLocalX( sx + event.dx, Self ), PROJ.patch.GetLocalY( sy + event.dy, Self ), _GetTemplate( boxSelected.kind ) )
+					PROJ.patch.boxes.AddLast( box )
 				EndIf
 				
 				boxSelected = Null
@@ -108,30 +103,5 @@ Class Tray Extends ViewGadget
 			boxSelected.Render()
 			EnableScissor()
 		EndIf
-	End
-End
-
-
-
-Class View Extends Gadget
-	Field box:Box
-	
-	Method New( x:Int, y:Int, w:Int, h:Int )
-		Self.x = x; Self.y = y; Self.w = w; Self.h = h
-		box = New ViewBox( 8, 8 )
-	End
-	
-	Method HandleEvent:Gadget( event:Event )
-		Return Self
-	End
-	
-	Method OnRender:Void()
-		SetColor 255, 255, 255
-		DrawRect 0, 0, w, h
-		SetColor 0, 0, 0
-		DrawRect 1, 1, w - 2, h - 2
-		
-		SetColor 255, 255, 255
-		box.Render()
 	End
 End

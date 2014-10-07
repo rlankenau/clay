@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root idNext="38" ox="0" oy="0">
+  <boxes>
+    <invert id="27" x="252" y="76">
+      <settings />
+    </invert>
+    <darken id="32" x="203" y="221">
+      <settings />
+    </darken>
+    <darken id="29" x="182" y="152">
+      <settings />
+    </darken>
+    <invert id="31" x="192" y="191">
+      <settings />
+    </invert>
+    <lighten id="30" x="242" y="168">
+      <settings />
+    </lighten>
+    <expand id="34" x="186" y="117">
+      <settings />
+    </expand>
+    <expand id="35" x="248" y="138">
+      <settings />
+    </expand>
+    <view id="33" x="203" y="263">
+      <settings />
+    </view>
+    <smooth id="26" x="190" y="90">
+      <settings edge="0" laps="9" />
+    </smooth>
+    <smooth id="28" x="245" y="105">
+      <settings edge="0" laps="9" />
+    </smooth>
+    <noise id="25" x="209" y="41">
+      <settings density="9" />
+    </noise>
+  </boxes>
+  <wires>
+    <wire from="25" to="26" toId="0" />
+    <wire from="25" to="27" toId="0" />
+    <wire from="27" to="28" toId="0" />
+    <wire from="29" to="31" toId="0" />
+    <wire from="30" to="32" toId="1" />
+    <wire from="31" to="32" toId="0" />
+    <wire from="32" to="33" toId="0" />
+    <wire from="26" to="34" toId="0" />
+    <wire from="34" to="29" toId="0" />
+    <wire from="34" to="30" toId="0" />
+    <wire from="28" to="35" toId="0" />
+    <wire from="35" to="30" toId="1" />
+    <wire from="35" to="29" toId="1" />
+  </wires>
+</root>
+

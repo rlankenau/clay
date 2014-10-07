@@ -36,18 +36,19 @@ Class Browser Extends ContainerGadget
 		AddChild( newButton )
 	End
 	
-	Method AddTab:Void( name:String )
+	Method AddTab:TabGadget( name:String )
 		Local tab:TabGadget = New TabGadget( name )
 		If Not tabs.IsEmpty() Then tab.x = tabs.First().x + 1
 		AddChild( tab )
 		tabs.AddFirst( tab )
+		Return tab
 	End
 	
 	Method RemoveTab:Void( tab:TabGadget )
 		tabs.RemoveEach( tab )
 		children.RemoveEach( tab )
 		window.children.Remove( tab.project )
-		If APP.project = tab.project Then APP.project = Null
+		If PROJ = tab.project Then SetProject( Null )
 	End
 	
 	Method HandleGadgetEvent:Void( event:GadgetEvent )
@@ -104,7 +105,7 @@ Class Browser Extends ContainerGadget
 			Until tabs.IsEmpty()
 			
 			tabs = tabsNew
-			APP.project = Null
+			SetProject( Null )
 			
 			For Local tab:TabGadget = EachIn tabs.Backwards()
 				If tab.locked
@@ -113,7 +114,7 @@ Class Browser Extends ContainerGadget
 				
 				If TabGadget( children.Last() ) = tab
 					tab.chosen = True
-					APP.project = tab.project
+					SetProject( tab.project )
 				Else
 					tab.chosen = False
 				EndIf
@@ -155,7 +156,7 @@ Class TabGadget Extends ContainerGadget
 	
 	Method New( path:String )
 		Self.name = os.StripAll( path )
-		w = TextWidth( name ) + 18 + 34
+		w = TextWidth( name ) + 18 + 34		'NOTE this is duplicated below
 		h = 18
 		saveButton = New BrowserButton( 8 + TextWidth( Self.name ) + 11, 5, imgSave )
 		closeButton = New BrowserButton( 8 + TextWidth( name ) + 11 + 9 + 5, 5, imgClose )
@@ -187,13 +188,20 @@ Class TabGadget Extends ContainerGadget
 		If event.source = closeButton 
 			Browser( parent ).RemoveTab( Self )
 		ElseIf event.source = saveButton
-			Local path:String = SaveFileName()
+			project.Save()
+			
+			If project.path <> ""
+				name = os.StripAll( project.path )
+				w = TextWidth( name ) + 18 + 34
+				saveButton.x = 8 + TextWidth( Self.name ) + 11
+				closeButton.x = 8 + TextWidth( Self.name ) + 11 + 9 + 5
+			EndIf
 		EndIf
 	End
 	
 	Method OnRender:Void()
 		Local name:String = Self.name
-		If chosen Then name += "*"
+		If Not project.saved Then name += "*"
 		SetColor 255, 255, 255
 		imgTab.Draw( 0, 0, w, h )
 		DrawText name, 8, 2

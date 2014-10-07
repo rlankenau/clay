@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root idNext="27" ox="0" oy="0">
+  <boxes>
+    <automata id="23" x="215" y="137">
+      <settings edge="0" laps="3" rules="116080" />
+    </automata>
+    <automata id="26" x="286" y="99">
+      <settings edge="0" laps="1" rules="0" />
+    </automata>
+    <view id="0" x="215" y="193">
+      <settings />
+    </view>
+    <noise id="24" x="215" y="55">
+      <settings density="9" />
+    </noise>
+  </boxes>
+  <wires>
+    <wire from="24" to="23" toId="0" />
+    <wire from="23" to="0" toId="0" />
+  </wires>
+</root>
+

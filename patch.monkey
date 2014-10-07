@@ -17,6 +17,14 @@ Class Patch Extends ViewGadget
 		Self.x = x; Self.y = y; Self.w = w; Self.h = h
 	End
 	
+	Method _GetBoxById:Box( id:Int )
+		For Local box:Box = EachIn boxes
+			If box.id = id Then Return box
+		Next
+		
+		Return Null
+	End
+	
 	Method HandleEvent:Gadget( event:Event )
 		Select event.id
 		Case EVENT_MOUSE_MOVE
@@ -32,14 +40,14 @@ Class Patch Extends ViewGadget
 			
 			Select _dragMode
 			Case DRAG_BOX
-				APP.project.boxSelected.x = sx + event.dx
-				APP.project.boxSelected.y = sy + event.dy
+				PROJ.boxSelected.x = sx + event.dx
+				PROJ.boxSelected.y = sy + event.dy
 			Case DRAG_WIRE
 				'TODO
 			End
 		Case EVENT_MOUSE_DRAG_RIGHT
-			ox = sx + event.dx
-			oy = sy + event.dy
+			'ox = sx + event.dx
+			'oy = sy + event.dy
 		Case EVENT_MOUSE_DOWN_LEFT
 			_dragMode = DRAG_NONE
 			
@@ -58,15 +66,15 @@ Class Patch Extends ViewGadget
 					_dragMode = DRAG_BOX
 					
 					SelectBox( boxOver )
-					boxes.Remove( APP.project.boxSelected )
-					boxes.AddLast( APP.project.boxSelected )
-					sx = APP.project.boxSelected.x; sy = APP.project.boxSelected.y
+					boxes.Remove( PROJ.boxSelected )
+					boxes.AddLast( PROJ.boxSelected )
+					sx = PROJ.boxSelected.x; sy = PROJ.boxSelected.y
 				EndIf
 			Else
 				SelectBox( Null )
 			EndIf
 		Case EVENT_MOUSE_DOWN_RIGHT
-			sx = ox; sy = oy
+			'sx = ox; sy = oy
 		Case EVENT_MOUSE_UP_LEFT
 			If _dragMode = DRAG_WIRE
 				If boxOver <> Null
@@ -79,8 +87,8 @@ Class Patch Extends ViewGadget
 			ElseIf _dragMode = DRAG_BOX
 				Local gadget:Gadget = window.HandleEvent( New Event( EVENT_SECRET ) )
 			
-				If gadget <> APP.patch
-					DeleteBox( APP.project.boxSelected )
+				If gadget <> PROJ.patch
+					DeleteBox( PROJ.boxSelected )
 					SelectBox( Null )
 				EndIf
 			EndIf
@@ -88,8 +96,8 @@ Class Patch Extends ViewGadget
 		Case EVENT_MOUSE_UP_RIGHT
 			
 		Case EVENT_MOUSE_DOUBLE_CLICK_LEFT
-			If APP.project.boxSelected <> Null And APP.project.boxSelected = boxOver And APP.project.boxSelected.ins = 0
-				APP.project.boxSelected.Execute()
+			If PROJ.boxSelected <> Null And PROJ.boxSelected = boxOver And PROJ.boxSelected.ins = 0
+				PROJ.boxSelected.Execute()
 			EndIf
 		End
 		
@@ -126,6 +134,31 @@ Class Patch Extends ViewGadget
 				EndIf
 			Next
 		EndIf
+	End
+	
+	
+	Method CycleCheck:Bool( a:Box, b:Box )
+		Local list := New List< Box >()
+		list.AddLast( b )
+		Local count:Int = 0
+	
+		While list.Count() <> count
+			count = list.Count()
+		
+			For Local wire:Wire = EachIn wires
+				If list.Contains( wire.b )
+					If Not list.Contains( wire.a )
+						list.AddLast( wire.a )
+					EndIf
+				EndIf
+			Next
+		Wend
+	
+		If list.Contains( a )
+			Return True
+		EndIf
+	
+		Return False
 	End
 	
 	Method OnRender:Void()
@@ -187,23 +220,23 @@ End
 
 
 Function SelectBox:Void( box:Box )
-	APP.project.boxSelected = box
-	APP.panel.children.Clear()
+	PROJ.boxSelected = box
+	PROJ.panel.children.Clear()
 	If box = Null Then Return
 	Local y:Int = 4
 	
 	For Local setting:Setting = EachIn box.settings.Values()
 		Select setting.kind
 			Case "f"
-				APP.panel.AddChild( New Slider( 4, y, setting.name, setting.value ) )
+				PROJ.panel.AddChild( New Slider( 4, y, setting.name, setting.value ) )
 			Case "i1-9"
-				APP.panel.AddChild( New NumberBox( 4, y, setting.name, setting.value, 1, 9 ) )
+				PROJ.panel.AddChild( New NumberBox( 4, y, setting.name, setting.value, 1, 9 ) )
 			Case "dedge"
-				APP.panel.AddChild( New DropList( 4, y, setting.name, [ "dead", "alive", "wrap" ], setting.value ) )
+				PROJ.panel.AddChild( New DropList( 4, y, setting.name, [ "dead", "alive", "wrap" ], setting.value ) )
 			Case "b"
-				APP.panel.AddChild( New CheckBox( 4, y, setting.name, setting.value ) )
+				PROJ.panel.AddChild( New CheckBox( 4, y, setting.name, setting.value ) )
 			Case "a9s8"
-				APP.panel.AddChild( New RuleTable( 4, y, setting.name, setting.value ) )
+				PROJ.panel.AddChild( New RuleTable( 4, y, setting.name, setting.value ) )
 			Default
 		End
 		

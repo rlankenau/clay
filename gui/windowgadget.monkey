@@ -17,12 +17,7 @@ Class WindowGadget Extends ContainerGadget
 	
 	Method New( x:Int, y:Int, w:Int, h:Int )
 		Super.New( x, y, w, h )
-	End
-	
-	Method AddChild:Void( child:Gadget )
-		children.AddLast( child )
-		child.parent = Self
-		child.window = Self
+		window = Self
 	End
 	
 	Method HandleEvent:Gadget( event:Event )

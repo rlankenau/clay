@@ -15,9 +15,9 @@ Class Spark
 		Self.wire = wire
 		wire.b.done = False
 		
-		For Local other:Spark = EachIn APP.patch.sparks
+		For Local other:Spark = EachIn PROJ.patch.sparks
 			If other.wire = wire
-				APP.patch.sparks.Remove( other )
+				PROJ.patch.sparks.Remove( other )
 			EndIf
 		Next
 	End
@@ -32,14 +32,14 @@ Class Spark
 				satisfied[ wire.bId ] = True
 				
 				For Local n:Int = 0 Until wire.b.ins
-					For Local other:Wire = EachIn APP.patch.wires
+					For Local other:Wire = EachIn PROJ.patch.wires
 						If other.b = wire.b And other <> wire
 							satisfied[n] = other.a.done
 						EndIf
 					Next
 				Next
 				
-				For Local spark:Spark = EachIn APP.patch.sparks
+				For Local spark:Spark = EachIn PROJ.patch.sparks
 					If spark.wire.b = wire.b
 						If Not spark.arrived
 							satisfied[ spark.wire.bId ] = False
@@ -57,9 +57,9 @@ Class Spark
 				Next
 				
 				If shoot
-					For Local spark:Spark = EachIn APP.patch.sparks
+					For Local spark:Spark = EachIn PROJ.patch.sparks
 						If spark.wire.b = wire.b
-							APP.patch.sparks.Remove( spark )
+							PROJ.patch.sparks.Remove( spark )
 						EndIf
 					Next
 					

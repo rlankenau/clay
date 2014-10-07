@@ -28,7 +28,7 @@ Class CheckBox Extends Gadget
 				state = 2
 			Case EVENT_MOUSE_UP_LEFT
 				state = 0
-				Local gadget:Gadget = APP.window.HandleEvent( new Event( EVENT_SECRET ) )
+				Local gadget:Gadget = window.HandleEvent( new Event( EVENT_SECRET ) )
 				
 				If gadget = Self
 					 on = 1 - on
@@ -155,7 +155,7 @@ Class ButtonGadget Extends Gadget
 	Method HandleEvent:Gadget( event:Event )
 		Select event.id
 			Case EVENT_MOUSE_UP_LEFT
-				Local gadget:Gadget = APP.window.HandleEvent( New Event( EVENT_SECRET ) )
+				Local gadget:Gadget = window.HandleEvent( New Event( EVENT_SECRET ) )
 				
 				If gadget = Self
 					parent.HandleGadgetEvent( New GadgetEvent( Self ) )
@@ -275,49 +275,27 @@ End
 
 
 
-Global ruleTables := New IntMap< Rules >()
-
-
-
-Class Rules
-	Field id:Int
-	Field value:Int[]
-	
-	Method New( id:Int, value:Int[] )
-		Self.id = id
-		Self.value = value
-	End
-	
-	Method Copy:Rules()
-		Return New Rules( id, value.Resize( value.Length ) )
-	End
-End
-
-
-
 Class RuleTable Extends ContainerGadget
 	Field name:String
-	Field rules:Rules
+	Field rules:Int[]
 	
 	Field checkBoxes:CheckBox[]
 	
-	Method New( x:Int, y:Int, name:String, rulesId:Int )
+	Method New( x:Int, y:Int, name:String, rulesPacked:Int )
 		Self.x = x; Self.y = y
 		w = 32 + 16
-		Local rules:Rules = ruleTables.Get( rulesId )
+		rules = rules.Resize( 18 )
 		
-		If rules = Null
-			rules = New Rules( rulesId, [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] )
-			ruleTables.Insert( rulesId, rules )
-		EndIf
+		For Local n:Int = 0 Until 18	'[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+			rules[n] = ( rulesPacked Shr n ) & 1
+		Next
 		
-		Self.rules = rules
-		h = rules.value.Length * 16
+		h = rules.Length * 16
 		Self.name = name
-		checkBoxes = checkBoxes.Resize( rules.value.Length )
+		checkBoxes = checkBoxes.Resize( rules.Length )
 		
 		For Local n:Int = 0 until checkBoxes.Length()
-			Local checkBox:CheckBox = New CheckBox( 32, n * 16, "", rules.value[n] )
+			Local checkBox:CheckBox = New CheckBox( 32, n * 16, "", rules[n] )
 			checkBoxes[n] = checkBox
 			AddChild( checkBox )
 		Next
@@ -326,7 +304,7 @@ Class RuleTable Extends ContainerGadget
 	Method HandleGadgetEvent:Void( event:GadgetEvent )
 		For Local n:Int = 0 Until checkBoxes.Length
 			If event.source = checkBoxes[n]
-				rules.value[n] = checkBoxes[n].on
+				rules[n] = checkBoxes[n].on
 			EndIf
 		Next
 		
@@ -336,14 +314,38 @@ Class RuleTable Extends ContainerGadget
 	Method OnRender:Void()
 		SetColor 255, 255, 255
 		
-		For Local n:Int = 0 Until rules.value.Length
+		For Local n:Int = 0 Until rules.Length
 			Local b:Int = n Mod 9
 			Local a:Int = ( n - b ) / 9
 			DrawText a, 4, n * 16
 			DrawText b, 4 + 16, n * 16
-			DrawText rules.value[ n ], 4 + 32, n * 16
+			DrawText rules[n], 4 + 32, n * 16
 		Next
 		
 		Super.OnRender()
 	End
+End
+
+
+
+Function UnpackRules:Int[]( rulesPacked:Int )
+	Local rules:Int[ 18 ]
+	
+	For Local n:Int = 0 Until 18	'[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+		rules[n] = ( rulesPacked Shr n ) & 1
+	Next
+	
+	Return rules
+End
+
+
+
+Function PackRules:Int( rules:Int[] )
+	Local rulesPacked:Int
+	
+	For Local n:Int = 0 Until 18
+		rulesPacked = rulesPacked | ( rules[n] Shl n )
+	Next
+	
+	Return rulesPacked
 End

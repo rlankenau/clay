@@ -15,14 +15,14 @@ Class Wire
 		Self.b = b
 		Self.bId = bId
 		
-		For Local other:Wire = EachIn APP.patch.wires
+		For Local other:Wire = EachIn PROJ.patch.wires
 			If other.b = b And other.bId = bId
-				APP.patch.wires.Remove( other )
+				PROJ.patch.wires.Remove( other )
 			EndIf
 		Next
 		
 		If a.done
-			APP.patch.sparks.AddLast( New Spark( Self ) )
+			PROJ.patch.sparks.AddLast( New Spark( Self ) )
 		EndIf
 	End
 
@@ -34,12 +34,12 @@ Class Wire
 		EndIf
 		
 		If _dragMode = DRAG_WIRE
-			If APP.patch.boxOver <> Null And APP.patch.boxOver = b And APP.patch.inOver = bId
-				If Not CycleCheck( APP.patch.boxOver, from )
+			If PROJ.patch.boxOver <> Null And PROJ.patch.boxOver = b And PROJ.patch.inOver = bId
+				If Not PROJ.patch.CycleCheck( PROJ.patch.boxOver, from )
 					SetColor 255, 0, 0
 				EndIf
 			EndIf
-		ElseIf _dragMode = DRAG_NONE And APP.patch.boxOver = b And APP.patch.inOver = bId
+		ElseIf _dragMode = DRAG_NONE And PROJ.patch.boxOver = b And PROJ.patch.inOver = bId
 			SetColor 255, 0, 0
 		EndIf
 		
@@ -60,7 +60,7 @@ Class Wire
 	Function DrawFromTo:Void( a:Box, b:Box, bId:Int )
 		SetColor 255, 255, 255
 		
-		If CycleCheck( b, a )
+		If PROJ.patch.CycleCheck( b, a )
 			SetColor 255, 0, 0
 		EndIf
 		

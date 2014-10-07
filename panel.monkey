@@ -6,7 +6,7 @@ Import main
 
 
 
-Class Panel Extends ContainerGadget
+Class SidePanel Extends ContainerGadget
 	Field yMax:Int = 50
 	
 	Method New( x:Int, y:Int, w:Int, h:Int )
@@ -37,31 +37,33 @@ Class Panel Extends ContainerGadget
 		Select True
 			Case Slider( event.source ) <> Null
 				Local s:Slider = Slider( event.source )
-				APP.project.boxSelected.settings.Get( s.name ).value = s.index
+				PROJ.boxSelected.settings.Get( s.name ).value = s.index
 				_ExecuteBoxSelectedIfSatisfied()
 			Case NumberBox( event.source ) <> Null
 				Local n:NumberBox = NumberBox( event.source )
-				APP.project.boxSelected.settings.Get( n.name ).value = n.value 
+				PROJ.boxSelected.settings.Get( n.name ).value = n.value 
 				_ExecuteBoxSelectedIfSatisfied()
 			Case DropList( event.source ) <> Null
 				Local d:DropList = DropList( event.source )
-				APP.project.boxSelected.settings.Get( d.name ).value = d.index
+				PROJ.boxSelected.settings.Get( d.name ).value = d.index
 				_ExecuteBoxSelectedIfSatisfied()
 			Case CheckBox( event.source ) <> Null
 				Local c:CheckBox = CheckBox( event.source )
-				APP.project.boxSelected.settings.Get( c.name ).value = c.on
+				PROJ.boxSelected.settings.Get( c.name ).value = c.on
 				_ExecuteBoxSelectedIfSatisfied()
 			Case RuleTable( event.source ) <> Null
+				Local t:RuleTable = RuleTable( event.source )
+				PROJ.boxSelected.settings.Get( t.name ).value = PackRules( t.rules )
 				_ExecuteBoxSelectedIfSatisfied()
 			Default
 		End
 	End
 	
 	Method _ExecuteBoxSelectedIfSatisfied:Void()
-		Local satisfied:Bool[ APP.project.boxSelected.ins ]
+		Local satisfied:Bool[ PROJ.boxSelected.ins ]
 		
-		For Local wire:Wire = EachIn APP.patch.wires
-			If wire.b = APP.project.boxSelected And wire.a.done
+		For Local wire:Wire = EachIn PROJ.patch.wires
+			If wire.b = PROJ.boxSelected And wire.a.done
 				satisfied[ wire.bId ] = True
 			EndIf
 		Next
@@ -70,7 +72,7 @@ Class Panel Extends ContainerGadget
 			If satisfied[n] = False Then Return
 		Next
 		
-		APP.project.boxSelected.Execute()
+		PROJ.boxSelected.Execute()
 	End
 	
 	Method OnRender:Void()
